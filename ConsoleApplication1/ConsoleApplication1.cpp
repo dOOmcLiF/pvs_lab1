@@ -73,13 +73,13 @@ void parallelCompute(double a[], double b[], double c[], double d[], int N, int 
 
 	omp_set_num_threads(k);
 
-	// Вычисление массива a
+	
 		/*for (int i = 1; i < N; i++) {
 			for (int j = 0; j < L; j++) {
 				a[i] = a[i - 1] * i;
 			}
 		}*/
-
+	// Вычисление массива a
 #pragma omp parallel
 	{
 		int thread_id = omp_get_thread_num();
@@ -89,7 +89,7 @@ void parallelCompute(double a[], double b[], double c[], double d[], int N, int 
 
 		for (int i = start_index; i < end_index; i++) {
 			for (int j = 0; j < L; j++) {
-				a[i] = a[0] * tgamma(i + 1);
+				a[i] = a[0] * tgamma(i + 1);		// Использование гамма-функции
 			}
 		}
 	}
@@ -125,11 +125,12 @@ void parallelCompute(double a[], double b[], double c[], double d[], int N, int 
 	}
 
 	// Вычисление массива d (первый раз)
-		for (int i = 1; i < N; i++) {
-			for (int j = 0; j < L; j++) {
-				d[i] = sin(d[i - 1] * i);
-			}
+	// Избавиться от итерационной зависимости не получилось из-за отсутствия обратной функции синуса
+	for (int i = 1; i < N; i++) {
+		for (int j = 0; j < L; j++) {
+			d[i] = sin(d[i - 1] * i);
 		}
+	}
 
 	// Переопределение массива b
 #pragma omp parallel
